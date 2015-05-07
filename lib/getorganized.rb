@@ -10,7 +10,6 @@ class GetOrganizedByMonth
   MONTHS =[{1 => "January"},{2 => "February"},{3 => "March"}, {4 => "April"}, {5 => "May"}, {6 => "June"}, {7 => "July"}, {8 => "August"}, {9 => "September"}, {10 => "October"}, {11 => "November"}, {12 => "December"}]
 
   def initialize(files)
-    binding.pry
     @file = files.first 
     @file_created = File.birthtime(@file) 
    if @file.scan(/directory/).count > 0 
@@ -144,8 +143,14 @@ WEEKS = ["Week1", "Week2", "Week3", "Week4"]
           move_file(WEEKS[3])
         end
     end
+    go_back_up_a_directory
 end
 
+
+    def go_back_up_a_directory
+      FileUtils.cd("..")
+      RunGetOrganized.next_file
+    end
         
       def make_dir(week)
         FileUtils.mkdir("#{week}")
@@ -161,8 +166,14 @@ end
 
 class RunGetOrganized
 
+  @@count = 0
+
   def initialize
     GetOrganizedByMonth.new(Dir.glob("*"))
+  end
+
+  def self.next_file
+    GetOrganizedByMonth.new(Dir.glob("*")[@@count+1])
   end
 
 end 
